@@ -9,7 +9,8 @@
 | category       | TEXT      | Document category  |
 | upload_date    | DATE      | Upload date        |
 | extracted_text | TEXT      | OCR extracted text |
-
+| file_path      | TEXT      | Loc of stored file |
+                                
 ---
 
 ## Users Table

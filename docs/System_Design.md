@@ -2,6 +2,8 @@
 
 ## System Architecture
 
+The Intelligent Document Management System (IDMS) follows a three-tier architecture consisting of a frontend layer, backend layer, and database layer. Users interact with the frontend interface built using React.js and Tailwind CSS. The backend, developed using Python and Flask/FastAPI, handles document processing, OCR extraction, categorization, and business logic. The database stores document metadata, extracted text, and user information, enabling efficient search and retrieval.
+
 The Intelligent Document Management System (IDMS) follows a three-tier architecture:
 
 +----------------------+
@@ -39,7 +41,7 @@ The Intelligent Document Management System (IDMS) follows a three-tier architect
 
 ### Database
 
-* SQLite/MySQL
+* SQLite(Current Implementation)
 * Stores document metadata
 * Stores OCR extracted text
 * Stores user information
