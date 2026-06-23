@@ -1,3 +1,5 @@
+# Document Categorization
+
 ## 1. What is Document Categorization?
 Grouping documents into categories based on their content.
 
