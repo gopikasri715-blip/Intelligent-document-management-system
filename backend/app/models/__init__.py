@@ -1,2 +1,3 @@
-# Models package
-# User and Document models will be added here in Week 2
+from app.models.user import User
+from app.models.document import Document
+from app.models.activity import Activity

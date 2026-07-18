@@ -19,8 +19,12 @@ def create_app(config_name='default'):
     
     # Register blueprints (routes)
     from .routes import main as main_blueprint
+    from .routes.auth import auth
     app.register_blueprint(main_blueprint)
+    app.register_blueprint(auth)
     
+    # Import database models
+    from app.models import User, Document, Activity
     # Create database tables
     with app.app_context():
         db.create_all()
