@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db
 from app.models.user import User
+from app.utils.jwt_handler import generate_token
 
 auth = Blueprint("auth", __name__)
 
@@ -41,3 +42,49 @@ def register():
     return jsonify({
         "message": "Registration successful"
     }), 201
+
+@auth.route("/api/login", methods=["POST"])
+def login():
+
+    data = request.get_json()
+
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+
+        return jsonify({
+            "message": "Email and Password required"
+        }), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+
+        return jsonify({
+            "message": "User not found"
+        }), 404
+
+    if not check_password_hash(user.password, password):
+
+        return jsonify({
+            "message": "Invalid password"
+        }), 401
+
+    token = generate_token(user.id)
+
+    return jsonify({
+
+        "message": "Login Successful",
+
+        "token": token,
+
+        "user": {
+
+            "id": user.id,
+            "name": user.full_name,
+            "email": user.email
+
+        }
+
+    }), 200

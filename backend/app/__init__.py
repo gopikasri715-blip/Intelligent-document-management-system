@@ -1,6 +1,8 @@
 from flask import Flask
 from .config import config
 from .extensions import db, cors
+from .routes.document import document
+from .routes.activity import activity
 
 def create_app(config_name='default'):
     app = Flask(__name__, instance_relative_config=True)
@@ -20,8 +22,13 @@ def create_app(config_name='default'):
     # Register blueprints (routes)
     from .routes import main as main_blueprint
     from .routes.auth import auth
+    from .routes.document import document
+    from .routes.dashboard import dashboard
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth)
+    app.register_blueprint(document)
+    app.register_blueprint(dashboard)
+    app.register_blueprint(activity)
     
     # Import database models
     from app.models import User, Document, Activity
