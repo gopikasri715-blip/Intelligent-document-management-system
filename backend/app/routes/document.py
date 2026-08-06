@@ -7,6 +7,7 @@ from app.extensions import db
 from app.models.document import Document
 from app.models.activity import Activity
 from app.utils.ocr import extract_text
+from sqlalchemy import or_
 
 document = Blueprint("document", __name__)
 
@@ -94,17 +95,11 @@ def get_documents():
         data.append({
 
             "id": doc.id,
-
             "filename": doc.original_filename,
-
             "stored_filename": doc.filename,
-
             "file_type": doc.file_type,
-
             "file_size": doc.file_size,
-
             "category": doc.category,
-
             "upload_date": doc.upload_date.strftime("%Y-%m-%d %H:%M")
 
         })
@@ -112,7 +107,6 @@ def get_documents():
     return jsonify({
 
         "total": len(data),
-
         "documents": data
 
     })
@@ -128,7 +122,15 @@ def search_documents():
         }), 400
 
     documents = Document.query.filter(
-        Document.original_filename.ilike(f"%{query}%")
+
+        or_(
+
+            Document.original_filename.ilike(f"%{query}%"),
+
+            Document.extracted_text.ilike(f"%{query}%")
+
+        )
+
     ).all()
 
     data = []
