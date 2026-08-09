@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:5000",
+  baseURL: "https://intelligent-document-management-system-2.onrender.com",
 });
 
 // Automatically attach JWT token to every request
