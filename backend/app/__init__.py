@@ -4,36 +4,45 @@ from .extensions import db, cors
 from .routes.document import document
 from .routes.activity import activity
 
+
 def create_app(config_name='default'):
     app = Flask(__name__, instance_relative_config=True)
-    
+
     # Load config
     app.config.from_object(config[config_name])
-    
+
     # Initialize extensions
     db.init_app(app)
-    cors.init_app(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
-    
+    cors.init_app(
+        app,
+        resources={r"/api/*": {"origins": "http://localhost:5173"}}
+    )
+
     # Ensure upload and instance folders exist
     import os
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-    os.makedirs(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'instance'), exist_ok=True)
-    
-    # Register blueprints (routes)
+    os.makedirs(
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), 'instance'),
+        exist_ok=True
+    )
+
+    # Register blueprints
     from .routes import main as main_blueprint
     from .routes.auth import auth
     from .routes.document import document
     from .routes.dashboard import dashboard
+
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth)
     app.register_blueprint(document)
     app.register_blueprint(dashboard)
     app.register_blueprint(activity)
-    
+
     # Import database models
     from app.models import User, Document, Activity
+
     # Create database tables
     with app.app_context():
         db.create_all()
-    
+
     return app
