@@ -4,16 +4,19 @@ from uuid import uuid4
 import os
 
 from app.extensions import db
+from flask import send_from_directory
 from app.models.document import Document
 from app.models.activity import Activity
 from app.utils.ocr import extract_text
 from sqlalchemy import or_
+from app.utils.jwt_handler import token_required
 
 document = Blueprint("document", __name__)
 
 
 @document.route("/api/upload", methods=["POST"])
-def upload_document():
+@token_required
+def upload_document(user_id):
 
     if "file" not in request.files:
         return jsonify({
@@ -55,7 +58,7 @@ def upload_document():
 
         extracted_text=extracted_text,
 
-        uploaded_by=1
+        uploaded_by=user_id
         
 
     )
@@ -68,7 +71,7 @@ def upload_document():
     activity_type="UPLOAD",
     description=f"Uploaded document: {document_data.original_filename}",
     document_id=document_data.id,
-    user_id=1
+    user_id=user_id
 )
 
     db.session.add(activity)
@@ -82,7 +85,8 @@ def upload_document():
 
     }), 201
 @document.route("/api/documents", methods=["GET"])
-def get_documents():
+@token_required
+def get_documents(user_id):
 
     documents = Document.query.order_by(
         Document.upload_date.desc()
@@ -112,7 +116,8 @@ def get_documents():
     })
 
 @document.route("/api/search", methods=["GET"])
-def search_documents():
+@token_required
+def search_documents(user_id):
 
     query = request.args.get("query")
 
@@ -159,7 +164,8 @@ def search_documents():
 
     })
 @document.route("/api/documents/<int:document_id>", methods=["GET"])
-def get_document(document_id):
+@token_required
+def get_document(document_id, user_id):
 
     document = Document.query.get(document_id)
 
@@ -190,7 +196,8 @@ def get_document(document_id):
 
     })
 @document.route("/api/documents/<int:document_id>", methods=["DELETE"])
-def delete_document(document_id):
+@token_required
+def delete_document(document_id, user_id):
 
     document = Document.query.get(document_id)
 
@@ -211,7 +218,7 @@ def delete_document(document_id):
         activity_type="DELETE",
         description=f"Deleted document: {document.original_filename}",
         document_id=document.id,
-        user_id=1
+        user_id=user_id
     )
 
     db.session.add(activity)
@@ -224,7 +231,8 @@ def delete_document(document_id):
         "message": "Document deleted successfully"
     })
 @document.route("/api/documents/<int:document_id>/category", methods=["PUT"])
-def update_category(document_id):
+@token_required
+def update_category(document_id, user_id):
 
     document = Document.query.get(document_id)
 
@@ -252,3 +260,19 @@ def update_category(document_id):
     return jsonify({
         "message": "Category updated successfully"
     })
+@document.route("/api/documents/<int:document_id>/download", methods=["GET"])
+@token_required
+def download_document(document_id, user_id):
+    document = Document.query.get(document_id)
+
+    if not document:
+        return jsonify({
+            "message": "Document not found"
+        }), 404
+
+    return send_from_directory(
+        current_app.config["UPLOAD_FOLDER"],
+        document.filename,
+        as_attachment=True,
+        download_name=document.original_filename
+    )

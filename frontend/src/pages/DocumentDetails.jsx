@@ -8,6 +8,8 @@ export default function DocumentDetails() {
     const { id } = useParams();
 
     const [document, setDocument] = useState(null);
+    const [category, setCategory] = useState("");
+const [editingCategory, setEditingCategory] = useState(false);
 
     useEffect(() => {
 
@@ -22,6 +24,7 @@ export default function DocumentDetails() {
             const response = await api.get(`/api/documents/${id}`);
 
             setDocument(response.data);
+            setCategory(response.data.category || "");
 
         }
 
@@ -46,7 +49,34 @@ export default function DocumentDetails() {
         );
 
     }
+const handleCategorySave = async () => {
 
+    try {
+
+        await api.put(
+            `/api/documents/${id}/category`,
+            {
+                category: category
+            }
+        );
+
+        setDocument({
+            ...document,
+            category: category
+        });
+
+        setEditingCategory(false);
+
+        alert("Category updated successfully");
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Failed to update category");
+
+    }
+};
     return(
 
         <MainLayout>
@@ -109,17 +139,91 @@ export default function DocumentDetails() {
 
                     </div>
 
-                    <div>
+                    <div className="mt-6">
 
-                        <p className="text-zinc-400">Category</p>
+    <p className="text-zinc-400 text-lg mb-2">
+        Category
+    </p>
 
-                        <h2 className="text-xl font-semibold">
+    {!editingCategory ? (
 
-                            {document.category || "Not Assigned"}
+        <div className="flex items-center gap-4">
 
-                        </h2>
+            <h2 className="text-xl font-semibold">
+                {document.category || "Not Assigned"}
+            </h2>
 
-                    </div>
+            <button
+                onClick={() => setEditingCategory(true)}
+                className="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded-lg font-semibold"
+            >
+                Edit Category
+            </button>
+
+        </div>
+
+    ) : (
+
+        <div className="flex items-center gap-3">
+
+            <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white outline-none"
+            >
+
+                <option value="">
+                    Select Category
+                </option>
+
+                <option value="Invoice">
+                    Invoice
+                </option>
+
+                <option value="Resume">
+                    Resume
+                </option>
+
+                <option value="Academic">
+                    Academic
+                </option>
+
+                <option value="Work">
+                    Work
+                </option>
+
+                <option value="Personal">
+                    Personal
+                </option>
+
+                <option value="Others">
+                    Others
+                </option>
+
+            </select>
+
+            <button
+                onClick={handleCategorySave}
+                className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-semibold"
+            >
+                Save
+            </button>
+
+            <button
+                onClick={() => {
+                    setCategory(document.category || "");
+                    setEditingCategory(false);
+                }}
+                className="bg-zinc-700 hover:bg-zinc-600 px-4 py-2 rounded-lg font-semibold"
+            >
+                Cancel
+            </button>
+
+        </div>
+
+    )}
+
+</div>
 
                 </div>
 
@@ -141,11 +245,17 @@ export default function DocumentDetails() {
 
                 <div className="flex gap-4 mt-8">
 
-                    <button className="bg-blue-600 px-6 py-3 rounded-lg hover:bg-blue-700">
-
-                        Download
-
-                    </button>
+                    <button
+  onClick={() => {
+    window.open(
+      `http://127.0.0.1:5000/api/documents/${id}/download`,
+      "_blank"
+    );
+  }}
+  className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold"
+>
+  Download
+</button>
 
                     <button className="bg-yellow-600 px-6 py-3 rounded-lg hover:bg-yellow-700">
 

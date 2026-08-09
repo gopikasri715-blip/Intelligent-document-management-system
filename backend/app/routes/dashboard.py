@@ -5,6 +5,7 @@ from datetime import date
 from app.models.document import Document
 from app.models.user import User
 from app.models.activity import Activity
+from app.utils.jwt_handler import token_required
 
 dashboard = Blueprint("dashboard", __name__)
 
@@ -12,7 +13,8 @@ dashboard = Blueprint("dashboard", __name__)
 # ================= Dashboard Stats =================
 
 @dashboard.route("/api/dashboard/stats", methods=["GET"])
-def dashboard_stats():
+@token_required
+def dashboard_stats(user_id):
 
     total_documents = Document.query.count()
 
@@ -42,7 +44,8 @@ def dashboard_stats():
 # ================= Dashboard Activity =================
 
 @dashboard.route("/api/dashboard/activity", methods=["GET"])
-def dashboard_activity():
+@token_required
+def dashboard_activity(user_id):
 
     activities = Activity.query.order_by(
         Activity.created_at.desc()

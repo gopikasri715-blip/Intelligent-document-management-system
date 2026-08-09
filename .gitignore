@@ -1,0 +1,18 @@
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Backend
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+
+# Uploaded documents
+backend/uploads/
+
+# Environment files
+.env
+*.env
+
+# Vite
+frontend/node_modules/.vite/

@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+
 import {
   FaHome,
   FaUpload,
@@ -10,42 +11,75 @@ import {
 } from "react-icons/fa";
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/login");
+  };
+
+  const linkClass = ({ isActive }) =>
+    `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+      isActive
+        ? "bg-purple-600 text-white"
+        : "text-zinc-400 hover:bg-zinc-800 hover:text-white"
+    }`;
+
   return (
-    <div className="w-64 bg-[#111827] h-screen text-white p-6 fixed">
+    <div className="w-64 min-h-screen bg-[#18181B] border-r border-zinc-800 p-6">
+
+      {/* LOGO */}
 
       <h1 className="text-3xl font-bold text-purple-400 mb-10">
         IDMS
       </h1>
 
-      <nav className="space-y-4">
+      {/* NAVIGATION */}
 
-        <Link className="flex items-center gap-3 hover:text-purple-400" to="/">
-          <FaHome /> Dashboard
-        </Link>
+      <nav className="space-y-3">
 
-        <Link className="flex items-center gap-3 hover:text-purple-400" to="/upload">
-          <FaUpload /> Upload
-        </Link>
+        <NavLink to="/" className={linkClass}>
+          <FaHome />
+          <span>Dashboard</span>
+        </NavLink>
 
-        <Link className="flex items-center gap-3 hover:text-purple-400" to="/search">
-          <FaSearch /> Search
-        </Link>
+        <NavLink to="/upload" className={linkClass}>
+          <FaUpload />
+          <span>Upload</span>
+        </NavLink>
 
-        <Link className="flex items-center gap-3 hover:text-purple-400" to="/categories">
-          <FaFolder /> Categories
-        </Link>
+        <NavLink to="/search" className={linkClass}>
+          <FaSearch />
+          <span>Search</span>
+        </NavLink>
 
-        <Link className="flex items-center gap-3 hover:text-purple-400" to="/reports">
-          <FaChartBar /> Reports
-        </Link>
+        <NavLink to="/categories" className={linkClass}>
+          <FaFolder />
+          <span>Categories</span>
+        </NavLink>
 
-        <Link className="flex items-center gap-3 hover:text-purple-400" to="/settings">
-          <FaCog /> Settings
-        </Link>
+        <NavLink to="/reports" className={linkClass}>
+          <FaChartBar />
+          <span>Reports</span>
+        </NavLink>
 
-        <Link className="flex items-center gap-3 text-red-400 mt-12" to="/login">
-          <FaSignOutAlt /> Logout
-        </Link>
+        <NavLink to="/settings" className={linkClass}>
+          <FaCog />
+          <span>Settings</span>
+        </NavLink>
+
+        {/* LOGOUT */}
+
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition mt-10 w-full"
+        >
+          <FaSignOutAlt />
+          <span>Logout</span>
+        </button>
 
       </nav>
 

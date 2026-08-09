@@ -9,17 +9,85 @@ import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import DocumentDetails from "./pages/DocumentDetails";
 
+import ProtectedRoute from "./components/ProtectedRoute";
+
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
-      <Route path="/upload" element={<Upload />} />
-      <Route path="/search" element={<Search />} />
-      <Route path="/categories" element={<Categories />} />
-      <Route path="/reports" element={<Reports />} />
-      <Route path="/settings" element={<Settings />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/document/:id" element={<DocumentDetails />}/>
+
+      {/* ================= LOGIN ================= */}
+
+      <Route
+        path="/login"
+        element={<Login />}
+      />
+
+
+      {/* ================= PROTECTED ROUTES ================= */}
+
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/upload"
+        element={
+          <ProtectedRoute>
+            <Upload />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/search"
+        element={
+          <ProtectedRoute>
+            <Search />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/categories"
+        element={
+          <ProtectedRoute>
+            <Categories />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/reports"
+        element={
+          <ProtectedRoute>
+            <Reports />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/document/:id"
+        element={
+          <ProtectedRoute>
+            <DocumentDetails />
+          </ProtectedRoute>
+        }
+      />
+
     </Routes>
   );
 }

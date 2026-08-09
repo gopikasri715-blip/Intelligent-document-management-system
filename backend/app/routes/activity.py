@@ -1,16 +1,20 @@
 from flask import Blueprint, jsonify
 
 from app.models.activity import Activity
+from app.utils.jwt_handler import token_required
 
 activity = Blueprint("activity", __name__)
 
 
 @activity.route("/api/activities", methods=["GET"])
-def get_activities():
+@token_required
+def get_activities(user_id):
 
-    activities = Activity.query.order_by(
-        Activity.created_at.desc()
-    ).limit(10).all()
+    activities = Activity.query.filter_by(
+    user_id=user_id
+).order_by(
+    Activity.created_at.desc()
+).limit(10).all()
 
     activity_list = []
 
